@@ -1,15 +1,16 @@
+// src/routes/organization.ts
 import { Router } from 'express';
 import { OrganizationController } from '../controllers/OrganizationController';
-import { authMiddleware } from '../middlewares/auth';
-import { AuthenticatedRequest } from '../middlewares/auth';
+import { authMiddleware, AuthenticatedRequest } from '../middlewares/auth';
 import { Response } from 'express';
 
 const router = Router();
 const organizationController = new OrganizationController();
 
-// Protect all organization routes
+// Apply auth middleware to all routes
 router.use(authMiddleware);
 
+// Organization routes
 router.post('/', (req: AuthenticatedRequest, res: Response) => 
     organizationController.create(req, res)
 );
