@@ -34,9 +34,8 @@ npm install
 
 3. Start development environment
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
 ## License
-
-Private
+Open Source
