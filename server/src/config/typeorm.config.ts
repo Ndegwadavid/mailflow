@@ -1,4 +1,4 @@
-// src/config/database.ts
+// src/config/typeorm.config.ts
 import { DataSource } from "typeorm";
 import { User } from "../models/User";
 import { Organization } from "../models/Organization";
@@ -13,15 +13,9 @@ export const AppDataSource = new DataSource({
     username: process.env.DB_USER || "mailflow",
     password: process.env.DB_PASSWORD || "mailflow123",
     database: process.env.DB_NAME || "mailflow",
-    synchronize: true,
+    synchronize: false, // Set to false for production
     logging: process.env.NODE_ENV === 'development',
-    entities: [
-        User,
-        Organization,
-        Subscriber,
-        Campaign,
-        Template
-    ],
-    subscribers: [],
-    migrations: []
+    entities: [User, Organization, Subscriber, Campaign, Template],
+    migrations: ["src/migrations/*.ts"],
+    subscribers: []
 });

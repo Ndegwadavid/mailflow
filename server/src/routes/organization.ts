@@ -1,4 +1,3 @@
-// src/routes/organization.ts
 import { Router } from 'express';
 import { OrganizationController } from '../controllers/OrganizationController';
 import { authMiddleware, AuthenticatedRequest } from '../middlewares/auth';
