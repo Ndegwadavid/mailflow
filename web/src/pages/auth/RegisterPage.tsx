@@ -2,16 +2,31 @@ import { useMutation } from '@tanstack/react-query';
 import { Link, useNavigate } from 'react-router-dom';
 import { RegisterForm } from '@/features/auth/RegisterForm';
 import { authService } from '@/services/auth.service';
+import { useState } from 'react';
 
 export const RegisterPage = () => {
   const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>('');
   
   const registerMutation = useMutation({
     mutationFn: authService.register,
     onSuccess: () => {
       navigate('/dashboard');
     },
+    onError: (error: Error) => {
+      setErrorMessage(error.message);
+      console.error('Registration error:', error);
+    }
   });
+
+  const handleRegister = async (data: any) => {
+    try {
+      await registerMutation.mutateAsync(data);
+    } catch (error) {
+      // Error will be handled by onError above
+      console.error('Registration handling error:', error);
+    }
+  };
 
   return (
     <div>
@@ -32,13 +47,13 @@ export const RegisterPage = () => {
 
       <div className="mt-10">
         <RegisterForm
-          onSubmit={(data) => registerMutation.mutate(data)}
+          onSubmit={handleRegister}
           isLoading={registerMutation.isPending}
         />
 
-        {registerMutation.isError && (
+        {errorMessage && (
           <div className="mt-4 text-sm text-red-600">
-            Unable to create account. Please try again.
+            {errorMessage}
           </div>
         )}
       </div>
