@@ -7,25 +7,64 @@ import {
   UsersIcon,
   EnvelopeIcon,
   ChartBarIcon,
+  Cog6ToothIcon,
 } from '@heroicons/react/24/outline';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { authService } from '../services/auth.service';
+import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { authService } from '@/services/auth.service';
+import clsx from 'clsx';
 
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: HomeIcon },
   { name: 'Subscribers', href: '/subscribers', icon: UsersIcon },
   { name: 'Campaigns', href: '/campaigns', icon: EnvelopeIcon },
   { name: 'Analytics', href: '/analytics', icon: ChartBarIcon },
+  { name: 'Settings', href: '/settings', icon: Cog6ToothIcon },
 ];
 
 export const DashboardLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = async () => {
     await authService.logout();
     navigate('/login');
   };
+
+  const NavLinks = () => (
+    <nav className="flex flex-1 flex-col">
+      <ul role="list" className="flex flex-1 flex-col gap-y-7">
+        <li>
+          <ul role="list" className="-mx-2 space-y-1">
+            {navigation.map((item) => (
+              <li key={item.name}>
+                <Link
+                  to={item.href}
+                  className={clsx(
+                    item.href === location.pathname
+                      ? 'bg-gray-50 text-blue-600'
+                      : 'text-gray-700 hover:text-blue-600 hover:bg-gray-50',
+                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold'
+                  )}
+                >
+                  <item.icon
+                    className={clsx(
+                      item.href === location.pathname
+                        ? 'text-blue-600'
+                        : 'text-gray-400 group-hover:text-blue-600',
+                      'h-6 w-6 shrink-0'
+                    )}
+                    aria-hidden="true"
+                  />
+                  {item.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </li>
+      </ul>
+    </nav>
+  );
 
   return (
     <div>
@@ -54,32 +93,11 @@ export const DashboardLayout = () => {
               leaveTo="-translate-x-full"
             >
               <Dialog.Panel className="relative mr-16 flex w-full max-w-xs flex-1">
-                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-2">
+                <div className="flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4">
                   <div className="flex h-16 shrink-0 items-center">
-                    <h1 className="text-2xl font-bold">MailFlow</h1>
+                    <h1 className="text-2xl font-bold text-gray-900">MailFlow</h1>
                   </div>
-                  <nav className="flex flex-1 flex-col">
-                    <ul role="list" className="flex flex-1 flex-col gap-y-7">
-                      <li>
-                        <ul role="list" className="-mx-2 space-y-1">
-                          {navigation.map((item) => (
-                            <li key={item.name}>
-                              <Link
-                                to={item.href}
-                                className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-blue-600"
-                              >
-                                <item.icon
-                                  className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-blue-600"
-                                  aria-hidden="true"
-                                />
-                                {item.name}
-                              </Link>
-                            </li>
-                          ))}
-                        </ul>
-                      </li>
-                    </ul>
-                  </nav>
+                  <NavLinks />
                 </div>
               </Dialog.Panel>
             </Transition.Child>
@@ -89,36 +107,14 @@ export const DashboardLayout = () => {
 
       {/* Static sidebar for desktop */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6">
+        <div className="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4">
           <div className="flex h-16 shrink-0 items-center">
-            <h1 className="text-2xl font-bold">MailFlow</h1>
+            <h1 className="text-2xl font-bold text-gray-900">MailFlow</h1>
           </div>
-          <nav className="flex flex-1 flex-col">
-            <ul role="list" className="flex flex-1 flex-col gap-y-7">
-              <li>
-                <ul role="list" className="-mx-2 space-y-1">
-                  {navigation.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        to={item.href}
-                        className="group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-gray-700 hover:bg-gray-50 hover:text-blue-600"
-                      >
-                        <item.icon
-                          className="h-6 w-6 shrink-0 text-gray-400 group-hover:text-blue-600"
-                          aria-hidden="true"
-                        />
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </li>
-            </ul>
-          </nav>
+          <NavLinks />
         </div>
       </div>
 
-      {/* Main content */}
       <div className="lg:pl-72">
         <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <button
@@ -130,13 +126,9 @@ export const DashboardLayout = () => {
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
 
-          {/* Separator */}
-          <div className="h-6 w-px bg-gray-200 lg:hidden" aria-hidden="true" />
-
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-            <div className="flex-1" />
+            <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
-              {/* Profile dropdown */}
               <Menu as="div" className="relative">
                 <Menu.Button className="-m-1.5 flex items-center p-1.5">
                   <span className="sr-only">Open user menu</span>
@@ -158,10 +150,10 @@ export const DashboardLayout = () => {
                       {({ active }) => (
                         <button
                           onClick={handleLogout}
-                          className={`
-                            block px-3 py-1 text-sm leading-6 text-gray-900 w-full text-left
-                            ${active ? 'bg-gray-50' : ''}
-                          `}
+                          className={clsx(
+                            active ? 'bg-gray-50' : '',
+                            'block w-full px-3 py-1 text-left text-sm leading-6 text-gray-900'
+                          )}
                         >
                           Sign out
                         </button>
